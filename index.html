@@ -10,7 +10,7 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #87CEEB; /* Blue ocean background */
+      background: #87CEEB; /* Ocean blue background */
       overflow: hidden;
     }
 
@@ -18,16 +18,51 @@
       position: relative;
       width: 100vw;
       height: 100vh;
-      background: url('https://via.placeholder.com/800x600.png?text=Greek+Landmass') no-repeat center center;
-      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* Dot styles */
+    .landmass {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      background: #228B22; /* Forest green for land */
+      border-radius: 50% 40% 60% 50% / 40% 50% 60% 50%;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .landmass::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      left: 5%;
+      width: 120px;
+      height: 80px;
+      background: #228B22;
+      border-radius: 60% 40% 70% 30%;
+      z-index: 1;
+    }
+
+    .landmass::after {
+      content: '';
+      position: absolute;
+      bottom: 5%;
+      right: 15%;
+      width: 200px;
+      height: 150px;
+      background: #228B22;
+      border-radius: 50% 50% 60% 40%;
+      z-index: 1;
+    }
+
+    /* Dots for Points of Interest */
     .dot {
       position: absolute;
       width: 20px;
       height: 20px;
-      background-color: #FFD700; /* Golden Dot for Greek theme */
+      background-color: #FFD700; /* Golden dots */
       border-radius: 50%;
       cursor: pointer;
       animation: pulse 2s infinite;
@@ -49,7 +84,7 @@
       }
     }
 
-    /* Blurb Styles */
+    /* Blurb styles for Pop-up Info */
     .blurb {
       position: absolute;
       background: white;
@@ -69,16 +104,44 @@
       margin: 0;
       font-size: 0.9em;
     }
+
+    /* Positioning the dots */
+    .dot#dot1 {
+      top: 20%;
+      left: 30%;
+    }
+
+    .dot#dot2 {
+      top: 40%;
+      left: 60%;
+    }
+
+    .dot#dot3 {
+      top: 70%;
+      left: 20%;
+    }
+
+    .dot#dot4 {
+      top: 50%;
+      left: 40%;
+    }
+
+    .dot#dot5 {
+      top: 80%;
+      left: 70%;
+    }
   </style>
 </head>
 <body>
   <div class="map-container">
-    <!-- Dots for districts -->
-    <div class="dot" style="top: 15%; left: 20%;" data-title="Acropolis District" data-content="The political and cultural center of Tiemeyerland, featuring grand temples and public forums."></div>
-    <div class="dot" style="top: 35%; left: 40%;" data-title="Agora Market" data-content="A bustling marketplace where merchants trade goods and ideas."></div>
-    <div class="dot" style="top: 50%; left: 60%;" data-title="Temple of Poseidon" data-content="A sacred site dedicated to the god of the sea, overlooking the ocean cliffs."></div>
-    <div class="dot" style="top: 70%; left: 30%;" data-title="Harbor of Athena" data-content="A fortified port where ships dock and naval activities flourish."></div>
-    <div class="dot" style="top: 85%; left: 50%;" data-title="Island of Delphi" data-content="A mysterious island believed to be home to oracles and ancient wisdom."></div>
+    <div class="landmass">
+      <!-- Dots for districts -->
+      <div class="dot" id="dot1" data-title="Acropolis District" data-content="The political and cultural center of Tiemeyerland, featuring grand temples and public forums."></div>
+      <div class="dot" id="dot2" data-title="Agora Market" data-content="A bustling marketplace where merchants trade goods and ideas."></div>
+      <div class="dot" id="dot3" data-title="Temple of Poseidon" data-content="A sacred site dedicated to the god of the sea, overlooking the ocean cliffs."></div>
+      <div class="dot" id="dot4" data-title="Harbor of Athena" data-content="A fortified port where ships dock and naval activities flourish."></div>
+      <div class="dot" id="dot5" data-title="Island of Delphi" data-content="A mysterious island believed to be home to oracles and ancient wisdom."></div>
+    </div>
 
     <!-- Blurb to display information -->
     <div class="blurb" id="blurb">
