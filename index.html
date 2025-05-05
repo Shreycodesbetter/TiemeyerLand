@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiemeyerland Interactive Map</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #87CEEB, #f0f0f0);
+      overflow: hidden;
+    }
+    .map-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    .dot {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #ff6347;
+      border-radius: 50%;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+    }
+    .dot:hover {
+      transform: scale(1.2);
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px 2px rgba(255, 99, 71, 0.8); }
+      50% { box-shadow: 0 0 20px 5px rgba(255, 99, 71, 0.4); }
+      100% { box-shadow: 0 0 10px 2px rgba(255, 99, 71, 0.8); }
+    }
+    .blurb {
+      position: absolute;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      display: none;
+      z-index: 10;
+    }
+    .blurb h3 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
+    }
+    .blurb p {
+      margin: 0;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="map-container">
+    <!-- Dots for districts -->
+    <div class="dot" style="top: 20%; left: 30%;" data-title="Tech Haven" data-content="The hub of innovation where startups and multinational corporations collaborate on cutting-edge technologies."></div>
+    <div class="dot" style="top: 50%; left: 50%;" data-title="Green Grove" data-content="A residential area focused on sustainability, featuring vertical gardens and eco-friendly housing."></div>
+    <div class="dot" style="top: 70%; left: 20%;" data-title="Cultural Quarters" data-content="A vibrant district showcasing art galleries, theaters, and cuisine from around the world."></div>
+    <div class="dot" style="top: 40%; left: 75%;" data-title="Skyline Hub" data-content="The financial heart of Tiemeyerland, with towering skyscrapers and bustling markets."></div>
+    <div class="dot" style="top: 80%; left: 60%;" data-title="Harbor of Serenity" data-content="A coastal area with beaches, marinas, and a focus on marine conservation."></div>
+
+    <!-- Blurb to display information -->
+    <div class="blurb" id="blurb">
+      <h3 id="blurb-title"></h3>
+      <p id="blurb-content"></p>
+    </div>
+  </div>
+
+  <script>
+    const dots = document.querySelectorAll('.dot');
+    const blurb = document.getElementById('blurb');
+    const blurbTitle = document.getElementById('blurb-title');
+    const blurbContent = document.getElementById('blurb-content');
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', (event) => {
+        const title = event.target.getAttribute('data-title');
+        const content = event.target.getAttribute('data-content');
+
+        blurbTitle.textContent = title;
+        blurbContent.textContent = content;
+
+        const dotRect = event.target.getBoundingClientRect();
+        const blurbWidth = blurb.offsetWidth;
+        const blurbHeight = blurb.offsetHeight;
+
+        blurb.style.left = `${dotRect.left + window.scrollX + 20}px`;
+        blurb.style.top = `${dotRect.top + window.scrollY - blurbHeight / 2}px`;
+        blurb.style.display = 'block';
+      });
+    });
+
+    // Hide blurb when clicking anywhere else
+    document.addEventListener('click', (event) => {
+      if (!event.target.classList.contains('dot')) {
+        blurb.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
