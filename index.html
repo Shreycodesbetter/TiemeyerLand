@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tiemeyerland - Fixed Map</title>
+  <title>Tiemeyerland - Fixed Acropolis Rendering</title>
   <style>
     /* General Styles */
     body {
@@ -16,19 +16,17 @@
       background: linear-gradient(to bottom, #87CEEB, #1E90FF); /* Sky blue gradient */
     }
 
-    .map-container, .canvas-container {
+    /* Canvas Container for Rendering 3D View */
+    .canvas-container {
       flex: 2; /* Left two-thirds of the screen */
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-right: 2px solid #ccc;
+      background: #87CEEB; /* Matches the background sky */
     }
 
-    .canvas-container {
-      display: none; /* Initially hidden */
-    }
-
+    /* Info Container for Displaying Text */
     .info-container {
       flex: 1; /* Right one-third of the screen */
       background: #f9f9f9; /* Light gray background */
@@ -37,7 +35,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for separation */
     }
 
     .info {
@@ -47,162 +45,212 @@
       text-align: justify;
     }
 
+    /* Title Styling */
     .info-title {
       font-size: 1.5em;
       font-weight: bold;
       margin-bottom: 15px;
     }
 
-    .complex-landmass {
-      position: relative;
-      width: 70%; /* Adjusted size for better scaling */
-      height: 70%;
-      background: linear-gradient(to bottom, #2E8B57, #228B22); /* Gradient for land */
-      border-radius: 60% 40% 50% 50% / 40% 60% 50% 50%; /* Organic map shape */
-      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-    }
-
-    .dot {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: red;
-      border: 2px solid white;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      z-index: 3;
-    }
-
-    .dot:hover {
-      transform: scale(1.3); /* Enlarge on hover */
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-    }
-
-    /* Dots for Locations on the Map */
-    .dot#location1 {
-      top: 20%;
-      left: 30%;
-    }
-
-    .dot#location2 {
-      top: 50%;
-      left: 60%;
-    }
-
-    .dot#location3 {
-      top: 65%;
-      left: 25%;
-    }
-
+    /* Canvas for Rendering Three.js Scene */
     canvas {
       width: 100%;
       height: 100%;
       display: block;
     }
 
+    /* Back Button Styling */
     .back-button {
       position: absolute;
       top: 10px;
       left: 10px;
-      background: #ff6347;
+      background: #ff6347; /* Tomato red */
       color: white;
       border: none;
       padding: 10px 20px;
       font-size: 1em;
       cursor: pointer;
       border-radius: 5px;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
       transition: background-color 0.2s;
     }
 
     .back-button:hover {
-      background-color: #ff4500;
+      background-color: #ff4500; /* Darker red on hover */
     }
   </style>
 </head>
 <body>
-  <div class="map-container" id="map-container">
-    <div class="complex-landmass">
-      <!-- Location Dots -->
-      <div class="dot" id="location1" data-title="The Acropolis" data-info="An ancient citadel located on a rocky outcrop above the city and containing the remains of several historically significant buildings."></div>
-      <div class="dot" id="location2" data-title="Azure Coast" data-info="A stunning coastal region known for its crystal-clear waters and vibrant marine life."></div>
-      <div class="dot" id="location3" data-title="Emerald Forest" data-info="A lush, dense forest teeming with diverse flora and fauna."></div>
-    </div>
-  </div>
-  <div class="canvas-container" id="canvas-container">
+  <!-- Canvas for 3D Citadel Rendering -->
+  <div class="canvas-container">
     <canvas id="acropolis-view"></canvas>
     <button class="back-button" id="back-button">Back</button>
   </div>
+
+  <!-- Info Container -->
   <div class="info-container">
     <div class="info">
-      <div class="info-title" id="info-title">Welcome to Tiemeyerland</div>
+      <div class="info-title" id="info-title">The Acropolis</div>
       <p id="info-text">
-        Tiemeyerland is a beautiful fictional landmass surrounded by cliffs and beaches,
-        dotted with vibrant cities and villages. Explore its geography, culture, and history
-        by clicking on the locations on the map!
+        An ancient citadel located on a rocky outcrop above the city and containing the remains
+        of several historically significant buildings.
       </p>
     </div>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const dots = document.querySelectorAll('.dot');
-      const infoTitle = document.getElementById('info-title');
-      const infoText = document.getElementById('info-text');
-      const mapContainer = document.getElementById('map-container');
-      const canvasContainer = document.getElementById('canvas-container');
-      const backButton = document.getElementById('back-button');
+      // DOM Elements
       const canvas = document.getElementById('acropolis-view');
+      const backButton = document.getElementById('back-button');
 
+      // Three.js Variables
       let scene, camera, renderer;
 
+      /**
+       * Function to Initialize the 3D Acropolis View
+       */
       function initAcropolisView() {
-        // Create the Three.js scene for the Acropolis
+        // Step 1: Create a Scene
         scene = new THREE.Scene();
 
-        // Camera setup
-        camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-        camera.position.set(30, 20, 40);
-        camera.lookAt(0, 0, 0);
+        // Step 2: Setup Camera
+        camera = new THREE.PerspectiveCamera(
+          75, // Field of View
+          canvas.clientWidth / canvas.clientHeight, // Aspect Ratio
+          0.1, // Near Clipping Plane
+          1000 // Far Clipping Plane
+        );
+        camera.position.set(30, 20, 40); // Position the camera
+        camera.lookAt(0, 10, 0); // Point the camera at the center of the scene
 
-        // Renderer setup
+        // Step 3: Setup Renderer
         renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
         renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
-        // Lighting
+        // Step 4: Add Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Soft ambient light
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Sunlight
-        directionalLight.position.set(10, 20, 10);
+        directionalLight.position.set(10, 20, 10); // Position the light source
         scene.add(ambientLight, directionalLight);
 
-        // Animation loop
-        function animate() {
-          requestAnimationFrame(animate);
-          renderer.render(scene, camera);
-        }
+        // Step 5: Add Ground
+        createGround();
+
+        // Step 6: Add Citadel Walls
+        createCitadelWalls();
+
+        // Step 7: Add Central Tower
+        createCentralTower();
+
+        // Step 8: Start Animation Loop
         animate();
       }
 
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          const title = dot.getAttribute('data-title');
-          const info = dot.getAttribute('data-info');
+      /**
+       * Function to Create the Ground
+       */
+      function createGround() {
+        const groundGeometry = new THREE.PlaneGeometry(50, 50);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa }); // Light gray
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2; // Rotate to make it horizontal
+        scene.add(ground);
+      }
 
-          infoTitle.textContent = title;
-          infoText.textContent = info;
+      /**
+       * Function to Create the Citadel Walls
+       */
+      function createCitadelWalls() {
+        const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xD2B48C }); // Faded tan
+        const wallHeight = 10;
+        const wallWidth = 40;
 
-          if (dot.id === 'location1') {
-            mapContainer.style.display = 'none';
-            canvasContainer.style.display = 'flex';
-            initAcropolisView();
+        const createWall = (x, z, rotation) => {
+          const wallGeometry = new THREE.BoxGeometry(wallWidth, wallHeight, 1);
+          const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+          wall.position.set(x, wallHeight / 2, z);
+          wall.rotation.y = rotation; // Rotate if needed (e.g., for side walls)
+          scene.add(wall);
+
+          // Add crenellations (notches on top of the wall)
+          for (let i = -wallWidth / 2; i < wallWidth / 2; i += 2) {
+            const crenellation = new THREE.Mesh(
+              new THREE.BoxGeometry(1, 2, 1), // Small box for each notch
+              wallMaterial
+            );
+            crenellation.position.set(
+              x + Math.cos(rotation) * i, // Adjust x-position
+              wallHeight + 1, // Place on top of the wall
+              z + Math.sin(rotation) * i // Adjust z-position
+            );
+            scene.add(crenellation);
           }
-        });
-      });
+        };
 
+        // Create Walls
+        createWall(0, -20, 0); // Front wall
+        createWall(0, 20, 0); // Back wall
+        createWall(-20, 0, Math.PI / 2); // Left wall
+        createWall(20, 0, Math.PI / 2); // Right wall
+      }
+
+      /**
+       * Function to Create the Central Tower
+       */
+      function createCentralTower() {
+        const towerGeometry = new THREE.BoxGeometry(10, 20, 10);
+        const towerMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Dark brown
+        const tower = new THREE.Mesh(towerGeometry, towerMaterial);
+        tower.position.set(0, 10, 0); // Place at the center of the citadel
+        scene.add(tower);
+
+        // Add Windows to the Tower
+        createWindows(tower);
+      }
+
+      /**
+       * Function to Add Windows to the Tower
+       */
+      function createWindows(tower) {
+        const windowMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB }); // Light blue windows
+        const windowGeometry = new THREE.BoxGeometry(2, 2, 0.1); // Flat windows
+
+        const createWindow = (x, y, z, rotation = 0) => {
+          const window = new THREE.Mesh(windowGeometry, windowMaterial);
+          window.position.set(x, y, z);
+          window.rotation.y = rotation;
+          tower.add(window); // Attach to the tower
+        };
+
+        // Create Rows of Windows on Each Side
+        for (let y = 5; y <= 15; y += 5) { // Vertical placement
+          createWindow(-3, y, 5.1); // Front left
+          createWindow(3, y, 5.1); // Front right
+          createWindow(-3, y, -5.1); // Back left
+          createWindow(3, y, -5.1); // Back right
+          createWindow(-5.1, y, -3, Math.PI / 2); // Left bottom
+          createWindow(-5.1, y, 3, Math.PI / 2); // Left top
+          createWindow(5.1, y, -3, Math.PI / 2); // Right bottom
+          createWindow(5.1, y, 3, Math.PI / 2); // Right top
+        }
+      }
+
+      /**
+       * Animation Loop
+       */
+      function animate() {
+        requestAnimationFrame(animate); // Request the next frame
+        renderer.render(scene, camera); // Render the scene
+      }
+
+      // Initialize the Acropolis View
+      initAcropolisView();
+
+      // Back button functionality
       backButton.addEventListener('click', () => {
-        canvasContainer.style.display = 'none';
-        mapContainer.style.display = 'flex';
+        window.history.back(); // Go back to the previous page
       });
     });
   </script>
