@@ -192,7 +192,7 @@
         scene.add(ambientLight, sunlight);
 
         // Floor
-        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x8B7765 });
+        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xD2B48C }); // Lighter tan color
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), floorMaterial);
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
@@ -204,7 +204,7 @@
         scene.add(tower);
 
         // Wall Around Citadel
-        const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xA0522D }); // Sandy brown material
+        const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xF4A460 }); // Lighter sandy brown
         const wallHeight = 6;
         const wallWidth = 1;
         const wallLength = 30;
@@ -227,7 +227,7 @@
         scene.add(wall4);
 
         // Add crenellations (battlements) to walls
-        const crenellationMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+        const crenellationMaterial = new THREE.MeshStandardMaterial({ color: 0xF4A460 }); // Same lighter color as the wall
         const crenellationWidth = 2;
         const crenellationHeight = 2;
         const crenellationDepth = 1;
