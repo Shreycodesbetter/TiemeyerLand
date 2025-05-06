@@ -34,18 +34,19 @@
       justify-content: center;
       padding: 20px;
       box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-    }
-
-    .info-container.hidden {
-      transform: translateX(100%);
     }
 
     .info {
       max-width: 80%;
-      font-size: 1.2em;
+      font-size: 1em;
       color: #333;
       text-align: justify;
+    }
+
+    .info-title {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 15px;
     }
 
     .complex-landmass {
@@ -135,18 +136,6 @@
       left: 25%;
     }
 
-    /* Style for info text */
-    .info-title {
-      font-size: 1.5em;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .info {
-      font-size: 1.2em;
-      color: #333;
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
       body {
@@ -170,37 +159,37 @@
     <div class="complex-landmass">
       <div class="river"></div>
       <div class="beach"></div>
-      <div class="dot" id="location1" data-info="City 1: Known for its beautiful gardens."></div>
-      <div class="dot" id="location2" data-info="City 2: Famous for its coastal views."></div>
-      <div class="dot" id="location3" data-info="City 3: A vibrant hub of culture and trade."></div>
+      <div class="dot" id="location1" data-title="City 1" data-info="Known for its beautiful gardens."></div>
+      <div class="dot" id="location2" data-title="City 2" data-info="Famous for its coastal views."></div>
+      <div class="dot" id="location3" data-title="City 3" data-info="A vibrant hub of culture and trade."></div>
     </div>
   </div>
-  <div class="info-container hidden" id="info-container">
+  <div class="info-container" id="info-container">
     <div class="info">
-      <div class="info-title" id="info-title">Click a location</div>
-      <p id="info-text">Click on a location on the map to learn more.</p>
+      <div class="info-title" id="info-title">Welcome to Tiemeyerland</div>
+      <p id="info-text">
+        Tiemeyerland is a beautiful fictional landmass surrounded by cliffs and beaches,
+        dotted with vibrant cities and villages. Explore its geography, culture, and history
+        by clicking on the locations on the map!
+      </p>
     </div>
   </div>
   <script>
     // JavaScript to handle dot clicks and display info
     document.addEventListener('DOMContentLoaded', () => {
       const dots = document.querySelectorAll('.dot');
-      const infoContainer = document.getElementById('info-container');
       const infoTitle = document.getElementById('info-title');
       const infoText = document.getElementById('info-text');
 
       dots.forEach(dot => {
         dot.addEventListener('click', () => {
           // Get the data from the clicked dot
+          const title = dot.getAttribute('data-title');
           const info = dot.getAttribute('data-info');
-          const [title, text] = info.split(': ');
 
-          // Update the info panel
+          // Update the info panel with the city's information
           infoTitle.textContent = title;
-          infoText.textContent = text;
-
-          // Show the info panel
-          infoContainer.classList.remove('hidden');
+          infoText.textContent = info;
         });
       });
     });
