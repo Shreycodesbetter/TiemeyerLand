@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tiemeyerland - Bustling Acropolis</title>
+  <title>Tiemeyerland - Colorful Citadel</title>
   <style>
     /* General Styles */
     body {
@@ -201,7 +201,7 @@
           for (let i = -wallWidth / 2; i < wallWidth / 2; i += 2) {
             const crenellation = new THREE.Mesh(
               new THREE.BoxGeometry(1, 2, 1),
-              wallMaterial
+              new THREE.MeshStandardMaterial({ color: 0x555555 }) // Darker for crenellations
             );
             crenellation.position.set(
               x + Math.cos(rotation) * i,
@@ -219,14 +219,14 @@
 
         // Central Tower
         const towerGeometry = new THREE.BoxGeometry(10, 20, 10);
-        const towerMaterial = new THREE.MeshStandardMaterial({ color: 0x555555 });
+        const towerMaterial = new THREE.MeshStandardMaterial({ color: 0x333399 }); // Blue tower
         const tower = new THREE.Mesh(towerGeometry, towerMaterial);
         tower.position.set(0, 10, 0);
         scene.add(tower);
 
         // Gate
         const gateGeometry = new THREE.BoxGeometry(8, 8, 1);
-        const gateMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const gateMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Brown gate
         const gate = new THREE.Mesh(gateGeometry, gateMaterial);
         gate.position.set(0, 4, -20.5);
         scene.add(gate);
