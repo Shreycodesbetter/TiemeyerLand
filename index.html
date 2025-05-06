@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tiemeyerland - Colorful Citadel</title>
+  <title>Tiemeyerland - Colorful Acropolis</title>
   <style>
     /* General Styles */
     body {
@@ -185,8 +185,8 @@
         ground.rotation.x = -Math.PI / 2;
         scene.add(ground);
 
-        // Walls with crenellations
-        const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+        // Walls with faded tan color
+        const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xD2B48C }); // Faded tan
         const wallHeight = 10;
         const wallWidth = 40;
 
@@ -201,7 +201,7 @@
           for (let i = -wallWidth / 2; i < wallWidth / 2; i += 2) {
             const crenellation = new THREE.Mesh(
               new THREE.BoxGeometry(1, 2, 1),
-              new THREE.MeshStandardMaterial({ color: 0x555555 }) // Darker for crenellations
+              wallMaterial
             );
             crenellation.position.set(
               x + Math.cos(rotation) * i,
@@ -217,12 +217,37 @@
         createWall(-20, 0, Math.PI / 2); // Left wall
         createWall(20, 0, Math.PI / 2); // Right wall
 
-        // Central Tower
+        // Central Tower with darker brown color
         const towerGeometry = new THREE.BoxGeometry(10, 20, 10);
-        const towerMaterial = new THREE.MeshStandardMaterial({ color: 0x333399 }); // Blue tower
+        const towerMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Dark brown
         const tower = new THREE.Mesh(towerGeometry, towerMaterial);
         tower.position.set(0, 10, 0);
         scene.add(tower);
+
+        // Windows for the tower (light blue)
+        const windowMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB }); // Light blue
+        for (let i = -4; i <= 4; i += 4) {
+          for (let j = 5; j <= 15; j += 5) {
+            const windowGeometry = new THREE.BoxGeometry(2, 2, 0.1);
+            const window = new THREE.Mesh(windowGeometry, windowMaterial);
+            window.position.set(i, j, 5.1); // Front side
+            tower.add(window);
+
+            const backWindow = window.clone();
+            backWindow.position.z = -5.1; // Back side
+            tower.add(backWindow);
+
+            const leftWindow = window.clone();
+            leftWindow.rotation.y = Math.PI / 2;
+            leftWindow.position.set(-5.1, j, i); // Left side
+            tower.add(leftWindow);
+
+            const rightWindow = window.clone();
+            rightWindow.rotation.y = Math.PI / 2;
+            rightWindow.position.set(5.1, j, i); // Right side
+            tower.add(rightWindow);
+          }
+        }
 
         // Gate
         const gateGeometry = new THREE.BoxGeometry(8, 8, 1);
