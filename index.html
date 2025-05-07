@@ -141,7 +141,10 @@
 
     <!-- Canvas Container -->
     <div class="canvas-container" id="canvas-container">
-      <canvas id="render-view"></canvas>
+      <!-- 3D Model Canvas -->
+      <canvas id="render-view" style="display: none;"></canvas>
+
+      <!-- Sketchfab Embed -->
       <div class="sketchfab-embed-wrapper" id="ekklesiasterion-model" style="display: none;">
         <iframe title="METAPONTO - Teatro" frameborder="0" allowfullscreen mozallowfullscreen="true"
           webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" 
@@ -156,6 +159,8 @@
             style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
         </p>
       </div>
+
+      <!-- Back Button -->
       <button class="back-button" id="back-button">Back</button>
     </div>
 
