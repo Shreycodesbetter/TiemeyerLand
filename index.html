@@ -141,26 +141,7 @@
 
     <!-- Canvas Container -->
     <div class="canvas-container" id="canvas-container">
-      <!-- 3D Model Canvas -->
-      <canvas id="render-view" style="display: none;"></canvas>
-
-      <!-- Sketchfab Embed -->
-      <div class="sketchfab-embed-wrapper" id="ekklesiasterion-model" style="display: none;">
-        <iframe title="METAPONTO - Teatro" frameborder="0" allowfullscreen mozallowfullscreen="true"
-          webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" 
-          src="https://sketchfab.com/models/24fb856149fc41eba9b7cee4928f8f66/embed">
-        </iframe>
-        <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
-          <a href="https://sketchfab.com/3d-models/metaponto-teatro-24fb856149fc41eba9b7cee4928f8f66" 
-             target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">METAPONTO - Teatro</a> 
-          by <a href="https://sketchfab.com/metapontoparcoarcheologico" target="_blank" rel="nofollow" 
-            style="font-weight: bold; color: #1CAAD9;">metapontoparcoarcheologico</a> on 
-          <a href="https://sketchfab.com" target="_blank" rel="nofollow" 
-            style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
-        </p>
-      </div>
-
-      <!-- Back Button -->
+      <canvas id="render-view"></canvas>
       <button class="back-button" id="back-button">Back</button>
     </div>
 
@@ -186,7 +167,6 @@
         const infoTitle = document.getElementById('info-title');
         const infoText = document.getElementById('info-text');
         const dots = document.querySelectorAll('.dot');
-        const ekklesiasterionModel = document.getElementById('ekklesiasterion-model');
 
         let scene, camera, renderer;
 
@@ -311,7 +291,43 @@
         }
 
         function initEkklesiasterionView() {
-          ekklesiasterionModel.style.display = 'block';
+          scene = new THREE.Scene();
+          camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+          camera.position.set(0, 1, 0);
+          camera.lookAt(0, 6, 20);
+          renderer = new THREE.WebGLRenderer({ canvas: canvas });
+          renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+          const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+          const sunlight = new THREE.DirectionalLight(0xfff5e1, 1);
+          sunlight.position.set(10, 20, 10);
+          scene.add(ambientLight, sunlight);
+
+          const amphitheaterMaterial = new THREE.MeshStandardMaterial({ color: 0xC0C0C0 });
+          for (let i = 0; i < 10; i++) {
+            const innerRadius = 8 + i * 2;
+            const outerRadius = innerRadius + 2;
+            const seating = new THREE.Mesh(
+              new THREE.RingGeometry(innerRadius, outerRadius, 50, 1, Math.PI, Math.PI),
+              amphitheaterMaterial
+            );
+            seating.rotation.x = -Math.PI / 2;
+            seating.position.y = i * 2;
+            scene.add(seating);
+          }
+
+          const stageMaterial = new THREE.MeshStandardMaterial({ color: 0x8B7765 });
+          const stage = new THREE.Mesh(new THREE.CircleGeometry(8, 50), stageMaterial);
+          stage.rotation.x = -Math.PI / 2;
+          stage.position.y = 0.5;
+          scene.add(stage);
+
+          function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+          }
+
+          animate();
         }
 
         dots.forEach(dot => {
@@ -335,7 +351,6 @@
         backButton.addEventListener('click', () => {
           canvasContainer.classList.remove('visible');
           mapContainer.classList.remove('hidden');
-          ekklesiasterionModel.style.display = 'none';
         });
       });
     </script>
